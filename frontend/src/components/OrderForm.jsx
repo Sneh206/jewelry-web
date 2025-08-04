@@ -173,7 +173,7 @@ const OrderForm = () => {
             <strong>Category:</strong> {product.category}
           </p>
           <img
-            src={product.image}
+            src={product.images[1]}
             alt={product.title}
             className="w-24 mt-2 rounded"
           />

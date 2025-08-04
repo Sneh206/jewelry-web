@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   return (
-    <aside className="hidden md:block w-64 bg-[#1E1B2E] text-white p-6 shadow-lg fixed top-[88px] bottom-0 left-0 overflow-y-auto rounded-r-2xl">
+    <aside className="mt-[-32px] hidden md:block w-64 bg-[#1E1B2E] text-white p-6 shadow-lg fixed top-[88px] bottom-0 left-0 overflow-y-auto ">
       <h2 className="text-xl font-bold text-[#FACC15] mb-8">Admin Menu</h2>
       <nav className="flex flex-col gap-6">
         <Link to="/adminapp/AdminDashboard" className="flex items-center gap-3 hover:text-[#FACC15]">

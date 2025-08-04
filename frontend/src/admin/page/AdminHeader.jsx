@@ -20,14 +20,14 @@ const AdminHeader = () => {
   };
 
   return (
-    <header className="bg-[#f5f3ea] shadow-sm px-6 py-4 flex justify-between items-center rounded-b-xl rounded-2xl mb-5">
+<header className="sticky top-0 z-50 bg-[#f5f3ea] shadow-sm px-6 py-4 flex justify-between items-center  mb-5">
       {/* Logo */}
       <Link to="/" className="text-2xl font-bold text-[#1a1a1a] font-serif tracking-wide">
         ELORIA Admin
       </Link>
 
       {/* Navigation */}
-      <nav className="hidden md:flex gap-8 text-[#1a1a1a] font-semibold text-sm tracking-wide">
+      <nav className="hidden md:flex gap-8 text-[#1a1a1a] font-semibold text-sm tracking-wide ">
         <Link to="/adminapp/AdminDashboard" className="hover:underline">Dashboard</Link>
         <Link to="/adminapp/order" className="hover:underline">Orders</Link>
         <Link to="/adminapp/admin" className="hover:underline">Products</Link>
