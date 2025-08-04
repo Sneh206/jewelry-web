@@ -1,0 +1,198 @@
+// AdminOrderPage.jsx
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import AdminHeader from '../page/AdminHeader.jsx';
+
+const AdminOrderPage = () => {
+  const [orders, setOrders] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+
+  const fetchOrders = async () => {
+    try {
+      const res = await axios.get('http://localhost:8000/orders/all', {
+        withCredentials: true,
+      });
+
+      const enrichedOrders = res.data.orders.map(order => {
+        const calculatedTotal = order.items.reduce((sum, item) => {
+          return sum + item.quantity * item.price;
+        }, 0);
+        return { ...order, totalAmount: calculatedTotal };
+      });
+
+      setOrders(enrichedOrders);
+
+      const revenue = enrichedOrders
+        .filter(order => order.status.toLowerCase() !== 'processing')
+        .reduce((sum, order) => sum + order.totalAmount, 0);
+
+      setTotalRevenue(revenue);
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+    }
+  };
+
+  const deleteOrder = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/orders/delete/${id}`, {
+        withCredentials: true,
+      });
+      fetchOrders();
+    } catch (err) {
+      console.error('Error deleting order:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  return (
+    <>
+      <div className="top-0 z-50 shadow-md m-6">
+        <AdminHeader />
+      </div>
+
+      <div className="min-h-screen flex justify-center bg-white px-4 py-6">
+        <div className="max-w-7xl w-full">
+          <div className="mb-6 p-6 bg-yellow-50 border border-yellow-200 rounded-xl shadow-lg text-center">
+            <h2 className="text-2xl font-bold text-yellow-700">💰 Total Payment Received</h2>
+            <p className="text-3xl mt-2 font-extrabold text-green-600">
+              ₹{totalRevenue.toFixed(2)}
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded shadow overflow-x-auto">
+            <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">📦 All Orders</h1>
+
+            <table className="w-full table-auto text-sm text-left text-gray-700">
+              <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                  <th className="px-4 py-3">#</th>
+                  <th className="px-4 py-3">Customer</th>
+                  <th className="px-4 py-3">Customer ID / Email</th>
+                  <th className="px-4 py-3">Items</th>
+                  <th className="px-4 py-3">Quantity</th>
+                  <th className="px-4 py-3">Price</th>
+                  <th className="px-4 py-3">Total</th>
+                  <th className="px-4 py-3">Payment</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Shipping</th>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Edit</th>
+                  <th className="px-4 py-3">Delete</th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y">
+                {orders.length ? (
+                  orders.map((order, idx) => (
+                    <tr key={order._id} className="hover:bg-gray-50 align-top">
+                      <td className="px-4 py-3">{idx + 1}</td>
+                      <td className="px-4 py-3 font-medium">{order.customerName}</td>
+                      <td className="px-4 py-3 text-xs text-gray-500 break-all">
+                        {order.customerEmail || 'N/A'}
+                      </td>
+                      <td className="px-4 py-3 space-y-2">
+                        {order.items.map((item, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <img
+                              src={
+                                item.image.startsWith('http')
+                                  ? item.image
+                                  : `http://localhost:8000/uploads/${item.image}`
+                              }
+                              alt={item.title}
+                              className="h-10 w-10 rounded object-cover border"
+                            />
+                            <p className="text-sm font-medium">{item.title}</p>
+                          </div>
+                        ))}
+                      </td>
+                      <td className="px-4 py-3 space-y-2">
+                        {order.items.map((item, i) => (
+                          <p key={i} className="text-sm">Qn: {item.quantity}</p>
+                        ))}
+                      </td>
+                      <td className="px-4 py-3 space-y-2">
+                        {order.items.map((item, i) => (
+                          <p key={i} className="text-sm">₹{item.price}</p>
+                        ))}
+                      </td>
+                      <td className="px-4 py-3 text-green-600 font-semibold">
+                        ₹{order.totalAmount.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            order.paymentStatus === 'Paid'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }`}
+                        >
+                          {order.paymentStatus}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs font-medium">
+                        <span
+                          className={`px-2 py-1 rounded-full font-semibold text-xs
+                            ${
+                              order.status.toLowerCase() === 'processing'
+                                ? 'text-red-600 bg-red-100'
+                                : order.status.toLowerCase() === 'shipped'
+                                ? 'text-yellow-700 bg-yellow-100'
+                                : order.status.toLowerCase() === 'delivered'
+                                ? 'text-green-600 bg-green-100'
+                                : order.status.toLowerCase() === 'cancelled'
+                                ? 'text-red-600 bg-red-100'
+                                : 'text-gray-600 bg-gray-100'
+                            }
+                          `}
+                        >
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-600">
+                        {order.shippingAddress?.address}, {order.shippingAddress?.city}
+                        <br />
+                        {order.shippingAddress?.state} - {order.shippingAddress?.pincode}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          to={`/adminapp/order/editorder/${order._id}`}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-xs rounded"
+                        >
+                          Edit
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => deleteOrder(order._id)}
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 text-xs rounded"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="13" className="text-center py-6 text-gray-400">
+                      No orders found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default AdminOrderPage;
