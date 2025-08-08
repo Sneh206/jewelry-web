@@ -22,20 +22,26 @@ dotenv.config();
 
 const app = express();
 
-app.use(express.json()); // Required to read req.body
+app.use(express.json()); // ✅ for parsing JSON request bodies
+// Required to read req.body
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors(
-    ({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],// frontend URL
-    credentials: true
-})
-))
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use('/uploads', express.static('uploads'));
 
+import session from "express-session";
 
+app.use(session({
+  secret: process.env.JWT_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax'
+  }
+}));
 
-const port = process.env.PORT
 ConnectDB();
 
 // admin penal
@@ -47,6 +53,7 @@ app.use('/contactUs',ContactUsRouters);
 // user penal
 app.use('/user',UserRouter)
 
-app.listen(port,()=>{
-    console.log('port is RUN : ',port);
-})
+
+app.listen(8000, () => {
+  console.log("Server running on http://localhost:8000");
+});

@@ -11,7 +11,7 @@ const Bracelets = () => {
   const fetchBracelets = async () => {
     try {
       const res = await axios.get("http://localhost:8000/adminproduct/", {
-        params: { title: "bracelets" }, // 👈 filtering by title
+        params: { title: "bracelets" },
         withCredentials: true,
       });
 
@@ -37,37 +37,44 @@ const Bracelets = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-yellow-100 py-10 px-4">
-      <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
-        🪙 Bracelets Collection
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-100 py-12 px-4">
+      <h2 className="text-5xl font-bold text-center text-yellow-800 mb-12 drop-shadow-md">
+        ✨ Bracelets Collection
       </h2>
 
       {error && (
-        <div className="text-center text-red-500 font-medium mb-4">{error}</div>
+        <div className="text-center text-red-500 font-semibold mb-4">
+          {error}
+        </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-10 max-w-7xl mx-auto">
         {bracelets.length > 0 ? (
           bracelets.map((item) => (
             <div
               onClick={() => handleCardClick(item._id)}
               key={item._id}
-              className="bg-white rounded-2xl border border-yellow-100 shadow hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="group bg-white/60 backdrop-blur-sm border border-yellow-100 rounded-3xl shadow-lg hover:shadow-2xl hover:scale-105 transform transition-all duration-500 ease-in-out cursor-pointer overflow-hidden"
             >
-              <img
+              <div className="relative">
+                <img
+                  src={`http://localhost:8000/uploads/${item.image}`}
+                  alt={item.title}
+                  className="w-full h-64 object-cover rounded-t-3xl transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 text-xs rounded-full shadow-md font-semibold">
+                  Bestseller
+                </div>
+              </div>
 
-                src={`http://localhost:8000/uploads/${item.image}`}
-                alt={item.title}
-                className="w-full h-56 object-cover rounded-t-2xl"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800">
+              <div className="p-5">
+                <h3 className="text-xl font-bold text-gray-800 group-hover:text-yellow-700 transition duration-300">
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-600 mt-2 line-clamp-2">
                   {item.description || "No description available"}
                 </p>
-                <p className="mt-2 text-yellow-600 font-bold text-lg">
+                <p className="mt-4 text-yellow-700 font-extrabold text-xl drop-shadow-sm">
                   ₹{item.price}
                 </p>
               </div>

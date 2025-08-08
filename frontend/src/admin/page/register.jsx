@@ -65,90 +65,46 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 px-4">
-      <div className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-lg space-y-6 border border-white/20">
-        <h2 className="text-3xl font-bold text-center text-white">Admin Registration</h2>
+      <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-[0_0_30px_rgba(255,255,255,0.1)] w-full max-w-xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+        <h2 className="text-4xl font-bold text-center text-white mb-6 drop-shadow-md">Admin Registration</h2>
 
-        {error && <p className="text-red-400 text-center font-medium">{error}</p>}
-        {success && <p className="text-green-400 text-center font-medium">{success}</p>}
+        {error && <p className="text-red-400 text-center font-medium mb-2">{error}</p>}
+        {success && <p className="text-green-400 text-center font-medium mb-2">{success}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center bg-white/10 border border-white/20 rounded-md px-4 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <FaUser className="text-white mr-2" />
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full bg-transparent text-white placeholder-white/70 outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex items-center bg-white/10 border border-white/20 rounded-md px-4 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <FaEnvelope className="text-white mr-2" />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full bg-transparent text-white placeholder-white/70 outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex items-center bg-white/10 border border-white/20 rounded-md px-4 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <FaLock className="text-white mr-2" />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full bg-transparent text-white placeholder-white/70 outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex items-center bg-white/10 border border-white/20 rounded-md px-4 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <FaLock className="text-white mr-2" />
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full bg-transparent text-white placeholder-white/70 outline-none"
-              required
-            />
-          </div>
-
-          <div className="flex items-center bg-white/10 border border-white/20 rounded-md px-4 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <FaPhone className="text-white mr-2" />
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full bg-transparent text-white placeholder-white/70 outline-none"
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {[
+            { icon: FaUser, name: "name", type: "text", placeholder: "Full Name" },
+            { icon: FaEnvelope, name: "email", type: "email", placeholder: "Email Address" },
+            { icon: FaLock, name: "password", type: "password", placeholder: "Password" },
+            { icon: FaLock, name: "confirmPassword", type: "password", placeholder: "Confirm Password" },
+            { icon: FaPhone, name: "phone", type: "tel", placeholder: "Phone Number" },
+          ].map(({ icon: Icon, name, type, placeholder }) => (
+            <div key={name} className="flex items-center bg-white/10 border border-white/20 rounded-lg px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500">
+              <Icon className="text-white mr-3 text-lg" />
+              <input
+                type={type}
+                name={name}
+                placeholder={placeholder}
+                value={formData[name]}
+                onChange={handleChange}
+                className="w-full bg-transparent text-white placeholder-white/60 outline-none"
+                required
+              />
+            </div>
+          ))}
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-lg font-semibold transition duration-300"
+            className="w-full bg-blue-600 hover:bg-blue-700 hover:shadow-lg text-white py-2.5 rounded-xl text-lg font-semibold transition-all duration-300 shadow-md"
           >
             Register
           </button>
         </form>
 
-        <div className="flex justify-between text-sm mt-4">
-          <p className="text-white">
+        <div className="flex justify-between text-sm mt-6 text-white">
+          <p>
             Already have an account?{' '}
-            <Link to="/adminlogin" className="text-blue-400 hover:underline">
+            <Link to="/adminapp/adminlogin" className="text-blue-400 hover:underline">
               Login
             </Link>
           </p>

@@ -49,7 +49,7 @@ const Product = () => {
   return (
     <div className="w-full px-4">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">All Products</h2>
+        <h2 className="text-2xl font-bold">🛍️ All Products</h2>
         <Link
           to="/adminapp/producttable"
           className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded shadow mt-4 sm:mt-0"

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 const Register = () => {
@@ -11,6 +11,7 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const naviget = useNavigate();
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -28,9 +29,10 @@ const Register = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:8000/user/register", formData);
+      const res = await axios.post("http://localhost:8000/user/register", formData,{withCredentials : true});
       setMessage("Registered Successfully!");
       setSuccess(true);
+      naviget("/login")
     } catch (error) {
       setMessage("Something went wrong!");
       setSuccess(false);

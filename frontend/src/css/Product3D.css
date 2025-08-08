@@ -1,0 +1,26 @@
+.product-card {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease, box-shadow 0.5s;
+}
+.product-card:hover {
+  transform: rotateY(10deg) rotateX(5deg) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.product-inner {
+  position: relative;
+}
+
+.product-reflection {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+  transform: scaleY(-1);
+  z-index: -1;
+  opacity: 0.6;
+  border-radius: 0 0 12px 12px;
+}

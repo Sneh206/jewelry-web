@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './page/Home.jsx';
 import Register from './page/register.jsx';
@@ -29,6 +30,9 @@ import Products from './components/product.jsx';
 import Bracelets from './components/Bracelets.jsx';
 import OrderPage from './components/OrderPage .jsx';
 import OrderForm from './components/OrderForm.jsx';
+import ContactUsData from "./admin/components/ContactUsData.jsx"
+import Cart from './components/Cart.jsx'
+
 
 
 function App() {
@@ -56,6 +60,18 @@ function App() {
             </>
           }
         />
+
+        <Route
+          path="/Cart"
+          element={
+            <>
+              <Header />
+              <Cart />
+              <Footer />
+            </>
+          }
+        />
+
         <Route
           path="/ContactUs"
           element={
@@ -102,6 +118,7 @@ function App() {
             </>
           }
         />
+
         <Route
           path="/register"
           element={
@@ -118,6 +135,7 @@ function App() {
             </>
           }
         />
+
 
         {/* Admin Panel (without Header) */}
         <Route path="/adminapp" element={<Adminapp />}>
@@ -137,6 +155,7 @@ function App() {
           <Route path="AdminDashboard" element={<AdminDashboard />} />
           <Route path='LatestProductshow' element={<LatestProductshow />} />
           <Route path='AdminContactUs' element={<AdminContactUs />} />
+          <Route path='ContactUsData' element={<ContactUsData />} />
         </Route>
       </Routes>
     </BrowserRouter>

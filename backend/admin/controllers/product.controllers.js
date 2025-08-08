@@ -177,3 +177,12 @@ export const oneproduct = async(req,res) => {
     res.status(500).json({ message: "Server error" });
   }
 }
+
+export const productsviwe = async(req,res) => {
+   try {
+    const products = await Product.find({ status: "Active" }); // Optional: Only show active ones
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Server error fetching products" });
+  }
+}

@@ -36,7 +36,7 @@ const Categories = () => {
         Explore Jewelry
       </h1>
 
-      {/* Filter Box with Hover */}
+      {/* Filter Box */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-10 shadow-md hover:shadow-lg transition duration-300">
         <div className="flex flex-col sm:flex-row gap-6 sm:items-end sm:justify-between">
           <div className="flex flex-col w-full sm:w-1/3">
@@ -76,31 +76,40 @@ const Categories = () => {
         </div>
       </div>
 
-      {/* All Products Title */}
+      {/* Product Grid */}
       <h2 className="text-2xl font-bold text-gray-800 mb-6">All Products</h2>
 
-      {/* Product Grid with Hover */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.length > 0 ? (
           products.map((p) => (
             <div
               key={p._id}
               onClick={() => handleCardClick(p._id)}
-              className="bg-white border border-yellow-200 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="relative cursor-pointer bg-white border border-yellow-300 rounded-3xl shadow-[0_10px_30px_rgba(255,204,0,0.3)] transform transition-transform duration-500 hover:scale-105 hover:-rotate-1 hover:shadow-[0_15px_40px_rgba(255,204,0,0.5)] group perspective"
+              style={{ perspective: '1200px' }}
             >
-              <img
-                src={`http://localhost:8000/uploads/${p.image}`}
-                alt={p.title}
-                className="w-full h-48 object-cover rounded-t-2xl"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">{p.title}</h3>
-                <p className="text-sm text-gray-600">Category: {p.category}</p>
-                <p className="text-sm text-gray-500 mb-2">
-  {p.description || 'No description available'}
-</p>
+              {/* Reflection/Glow Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent opacity-0 group-hover:opacity-25 rounded-3xl z-10 pointer-events-none" />
 
-                <p className="text-lg font-bold text-yellow-600">₹{p.price}</p>
+              <div className="rounded-t-3xl overflow-hidden h-56 bg-gradient-to-br from-yellow-50 to-white relative z-0">
+                <img
+                  src={`http://localhost:8000/uploads/${p.image}`}
+                  alt={p.title}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/default.jpg';
+                  }}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
+
+              <div className="p-5 relative z-10">
+                <h3 className="text-lg font-semibold text-gray-800 truncate">{p.title}</h3>
+                <p className="text-sm text-gray-500 mb-1">Category: {p.category}</p>
+                <p className="text-sm text-gray-500 mb-2">
+                  {p.description || 'No description available'}
+                </p>
+                <p className="text-yellow-600 font-bold text-base">₹{p.price}</p>
               </div>
             </div>
           ))

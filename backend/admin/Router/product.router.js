@@ -1,6 +1,6 @@
 import express from 'express';
 import { upload } from '../../utils/Multer.js';
-import { addProduct, createContact, deleteJewelry, filter,editProduct,getAllProducts, getLatestProducts, photo, statusdata, oneproduct } from '../../../backend/admin/controllers/product.controllers.js';
+import { addProduct, createContact, deleteJewelry, filter,editProduct,getAllProducts, getLatestProducts, photo, statusdata,productsviwe,oneproduct } from '../../../backend/admin/controllers/product.controllers.js';
 import { isAuth } from '../../utils/isAuth.js';
 
 const router = express.Router();
@@ -16,5 +16,7 @@ router.get('/latest',getLatestProducts);
 router.get('/photo',photo);
 router.get('/',filter);
 router.get("/one/:id",oneproduct);
+// ✅ PUBLIC - Anyone can view products
+router.get("/productviews",productsviwe)
 
 export default router;

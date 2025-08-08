@@ -1,30 +1,37 @@
-// middleware/isAuth.js
 import jwt from "jsonwebtoken";
 import { AdminUser } from "../admin/models/user.models.js";
 
 export const isAuth = async (req, res, next) => {
   try {
     const token = req.cookies.token;
+    if (!token) return res.status(403).json({ message: "Not logged in" });
 
-    if (!token) {
-      return res.status(403).json({ message: "Please Login" });
-    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const admin = await AdminUser.findById(decoded.id);
+    if (!admin) return res.status(403).json({ message: "Admin not found" });
 
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = admin;
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Auth failed", error });
+  }
+};
 
-    if (!decodedData) {
-      return res.status(403).json({ message: "Token expired" });
-    }
+export const adminAuth = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: "No token" });
 
-    const user = await AdminUser.findById(decodedData.id);
-    if (!user) {
-      return res.status(403).json({ message: "User not found" });
+    const decoded = jwt.verify(token, "your_secret_key");
+    const user = await User.findById(decoded.id);
+
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({ message: "Access denied. Not an admin." });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    console.error("Auth Error:", error);
-    res.status(500).json({ message: "Please Login" });
+    res.status(401).json({ message: "Unauthorized" });
   }
 };

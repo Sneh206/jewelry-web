@@ -20,15 +20,21 @@ const GoledProduct = () => {
   ];
 
   return (
-    <div className="flex gap-5 px-12 py-16 bg-white">
+    <div className="flex flex-wrap justify-center gap-10 px-6 py-16 bg-white">
       {categories.map((item, index) => (
-        <div key={index} className="w-96 text-center">
+        <div
+          key={index}
+          className="w-80 text-center transform transition duration-500 hover:-translate-y-4 hover:scale-105 hover:rotate-[1deg] relative group"
+        >
+          {/* Glow/shine overlay */}
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/10 to-yellow-100/5 opacity-0 group-hover:opacity-30 transition-opacity pointer-events-none z-10" />
+
           <img
             src={item.image}
             alt={item.label}
-            className="rounded-xl w-full h-[400px] object-cover shadow-md hover:shadow-xl transition"
+            className="rounded-xl w-full h-[400px] object-cover shadow-lg group-hover:shadow-2xl transition-shadow duration-500 z-0"
           />
-          <p className="mt-4 text-xl font-semibold text-gray-800">{item.label}</p>
+          <p className="mt-4 text-xl font-semibold text-yellow-800">{item.label}</p>
         </div>
       ))}
     </div>

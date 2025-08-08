@@ -6,10 +6,16 @@ const OrderForm = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userId = storedUser?._id;
+  const userEmail = storedUser?.email;
 
   const [formData, setFormData] = useState({
     customerName: "",
-    customerEmail: "",
+    customerEmail: userEmail || "",
     address: "",
     city: "",
     pincode: "",
@@ -17,68 +23,79 @@ const OrderForm = () => {
     country: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-
   useEffect(() => {
     axios
       .get(`http://localhost:8000/adminproduct/one/${productId}`)
       .then((res) => setProduct(res.data))
-      .catch((err) => console.log("Error fetching product:", err));
+      .catch((err) => console.error("Error fetching product:", err));
   }, [productId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userId) {
+      alert("Please log in to place an order.");
+      return;
+    }
 
     if (!product || loading) return;
 
     setLoading(true);
 
-    // Simulate 2-second delay
-    setTimeout(() => {
-      const orderData = {
-        customerId: "687dcac8bacd2ae0848134e1", // Replace with real user ID
-        customerName: formData.customerName,
-        items: [
-          {
-            productId: product._id,
-            title: product.title,
-            quantity: 1,
-            price: product.price,
-            image: product.image,
-          },
-        ],
-        totalAmount: product.price,
-        shippingAddress: {
-          address: formData.address,
-          city: formData.city,
-          pincode: formData.pincode,
-          state: formData.state,
-          country: formData.country,
+    const orderData = {
+      customerId: userId,
+      customerName: formData.customerName,
+      items: [
+        {
+          productId: product._id,
+          title: product.title,
+          quantity: 1,
+          price: product.price,
+          image: product.image,
         },
-      };
+      ],
+      totalAmount: product.price,
+      shippingAddress: {
+        address: formData.address,
+        city: formData.city,
+        pincode: formData.pincode,
+        state: formData.state,
+        country: formData.country,
+      },
+    };
 
-      axios
-        .post("http://localhost:8000/orders/create", orderData, {
-          withCredentials: true,
-        })
-        .then(() => {
-          setSuccess(true);
-          setTimeout(() => {
-            setLoading(false);
-            navigate("/");
-          }, 3000);
-        })
-        .catch((err) => {
-          console.error("Order error:", err);
-          setLoading(false);
-          alert("Failed to place order.");
-        });
-    }, 2000);
+    try {
+      await axios.post("http://localhost:8000/orders/create", orderData, {
+        withCredentials: true,
+      });
+
+      // Add the ordered item to cart in localStorage
+      const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+      const newCartItem = {
+        _id: product._id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+        status: "Ordered", // Set status here
+      };
+      const updatedCart = [...existingCart, newCartItem];
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+      setSuccess(true);
+      setTimeout(() => {
+        setLoading(false);
+        navigate("/Cart");
+      }, 2000);
+    } catch (err) {
+      console.error("Order error:", err);
+      setLoading(false);
+      alert("Failed to place order.");
+    }
   };
 
   if (!product) return <p className="text-center mt-10">Loading product...</p>;
@@ -105,12 +122,11 @@ const OrderForm = () => {
             name="customerEmail"
             value={formData.customerEmail}
             onChange={handleChange}
-            required
-            className="w-full border p-2 rounded"
+            readOnly
+            className="w-full border p-2 rounded bg-gray-100"
           />
         </div>
 
-        {/* Address */}
         <div>
           <label className="block font-semibold mb-1">Address</label>
           <input
@@ -163,26 +179,22 @@ const OrderForm = () => {
           />
         </div>
 
-        {/* Product Summary */}
         <div className="border-t pt-4">
           <h3 className="text-lg font-semibold mb-2">Product Summary</h3>
-          <p className="mb-1">
-            <strong>Product:</strong> {product.title}
-          </p>
-          <p className="mb-1">
-            <strong>Category:</strong> {product.category}
-          </p>
-          <img
-            src={product.images[1]}
-            alt={product.title}
-            className="w-24 mt-2 rounded"
-          />
+          <p className="mb-1"><strong>Product:</strong> {product.title}</p>
+          <p className="mb-1"><strong>Category:</strong> {product.category}</p>
+          {product.images && product.images.length > 0 && (
+            <img
+              src={product.images.length > 1 ? product.images[1] : product.images[0]}
+              alt={product.title}
+              className="w-24 mt-2 rounded"
+            />
+          )}
           <p className="text-yellow-700 font-bold mt-2">
             <strong>Total Amount:</strong> ₹{product.price}
           </p>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
