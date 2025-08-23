@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Order } from "../models/orders.models.js";
 
 // CREATE order
@@ -81,12 +82,87 @@ export const sell = async (req, res) => {
 };
 
 export const getUserOrders = async (req, res) => {
-  const { userId } = req.params;
-
   try {
-    const orders = await Order.find({ userId });
+    const orders = await Order.find({ userId: req.params.userId })
+      .populate("items.productId", "title price image") // Only needed fields
+      .sort({ createdAt: 1 }); // Oldest first, so last element is latest order
+
     res.status(200).json(orders);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch orders', error: err.message });
+    res.status(500).json({ message: "Failed to fetch orders", error: err.message });
   }
 };
+
+
+export const checkcrat = async(req,res) => {
+   try {
+    const { orderIds } = req.body;
+
+    // Get only orders that still exist
+    const orders = await Order.find({ orderId: { $in: orderIds } });
+
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to check cart items" });
+  }
+}
+
+import {CompletedOrder} from "../models/completedOrderSchema.js"
+// ✅ Get order details by ID
+export const orderdetails = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// ✅ Mark order as completed
+export const compledcreate = async (req, res) => {
+  try {
+    const { orderId, customerId, message } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Save in completed orders collection
+    const completed = new CompletedOrder({
+      orderId,
+      customerId,
+      customerName: order.customerName,
+      items: order.items,
+      totalAmount: order.totalAmount,
+      createdAt: order.createdAt,
+      message: message || "",
+      status: "completed",
+    });
+
+    await completed.save();
+
+    // Optional: Remove from pending orders
+    await Order.findByIdAndDelete(orderId);
+
+    res.json({ message: "Order marked as completed successfully!" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// ✅ Get all completed orders
+export const compledall = async(req, res) => {
+  try {
+    const completedOrders = await CompletedOrder.find().sort({ createdAt: -1 });
+    res.json(completedOrders);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+

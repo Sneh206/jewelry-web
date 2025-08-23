@@ -50,6 +50,13 @@ const Sidebar = () => {
         >
           <MessageCircle className="w-5 h-5" /> Contact Us
         </Link>
+
+        <Link to="/adminapp/CompledUserItem"
+          className="flex items-center gap-4 p-3 rounded-lg transition-all duration-300 bg-[#2A273E] hover:translate-x-1 hover:shadow-[4px_4px_10px_rgba(250,204,21,0.5)] hover:text-[#FACC15]"
+        >
+          <MessageCircle className="w-5 h-5" /> CompledUserItem
+        </Link>
+
       </nav>
     </aside>
   );

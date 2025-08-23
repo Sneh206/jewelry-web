@@ -4,6 +4,7 @@ import Home from './page/Home.jsx';
 import Register from './page/register.jsx';
 import Login from './page/login.jsx';
 import Header from './page/Header.jsx';
+import OrderCompleted from "./components/OrderCompleted .jsx"
 
 // Admin pages
 import Adminapp from './adminapp.jsx';
@@ -32,11 +33,13 @@ import OrderPage from './components/OrderPage .jsx';
 import OrderForm from './components/OrderForm.jsx';
 import ContactUsData from "./admin/components/ContactUsData.jsx"
 import Cart from './components/Cart.jsx'
+import CompledUserItem from './admin/components/compledUserItem.jsx';
 
 
 
 function App() {
   return (
+    <>
     <BrowserRouter>
       <Routes>
         {/* Public routes with Header */}
@@ -82,6 +85,12 @@ function App() {
             </>
           }
         />
+         <Route path="/Order-Completed"
+          element={
+            <><Header />
+              <OrderCompleted />
+              <Footer />
+            </>} />
         <Route path="/order-form/:productId"
           element={
             <><Header />
@@ -156,9 +165,13 @@ function App() {
           <Route path='LatestProductshow' element={<LatestProductshow />} />
           <Route path='AdminContactUs' element={<AdminContactUs />} />
           <Route path='ContactUsData' element={<ContactUsData />} />
+          <Route path='CompledUserItem' element={<CompledUserItem/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
+
+   
+    </>
   );
 }
 

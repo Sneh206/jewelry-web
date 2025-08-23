@@ -8,6 +8,9 @@ import OrderRoutes from "./admin/Router/order.router.js";
 import ContactUsRouters from "./admin/Router/ContactUs.router.js"
 import cookieParser from "cookie-parser";
 import cors from 'cors';
+import completedOrderRoutes from "./admin/Router/completedOrderSchema.js"
+
+
 
 // user penal
 import UserRouter from "./routers/User.routers.js"
@@ -49,6 +52,8 @@ app.use('/admin',RouteradminRegister);
 app.use('/adminproduct',Routeradminproduct);
 app.use('/orders', OrderRoutes);
 app.use('/contactUs',ContactUsRouters);
+app.use("/completed-orders", completedOrderRoutes);
+
 
 // user penal
 app.use('/user',UserRouter)

@@ -15,19 +15,28 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8000/user/login", formData, {
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        "http://localhost:8000/user/login",
+        formData,
+        { withCredentials: true }
+      );
 
-      // ✅ Store user info in localStorage
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (res.data && res.data.user) {
+        // ✅ Store only user object in localStorage
+        localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      setMessage("Login Successful!");
-      setSuccess(true);
+        console.log("User saved to localStorage:", res.data.user);
 
-      navigate("/");
+        setMessage("Login Successful!");
+        setSuccess(true);
+
+        navigate("/");
+      } else {
+        setMessage("Login failed: User data not found");
+        setSuccess(false);
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Login Error:", error);
       setMessage("Invalid credentials. Please try again.");
       setSuccess(false);
     }
@@ -36,10 +45,16 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FDF6F0] to-[#FCE8DE] flex items-center justify-center px-4">
       <div className="bg-white/90 backdrop-blur-lg p-10 rounded-3xl shadow-2xl max-w-md w-full border border-[#f2d7cd] animate-fadeIn">
-        <h2 className="text-3xl font-bold text-center text-[#3C3C3C] mb-6">Welcome Back</h2>
+        <h2 className="text-3xl font-bold text-center text-[#3C3C3C] mb-6">
+          Welcome Back
+        </h2>
 
         {message && (
-          <div className={`text-center text-sm mb-4 font-medium ${success ? "text-green-600" : "text-red-600"}`}>
+          <div
+            className={`text-center text-sm mb-4 font-medium ${
+              success ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {message}
           </div>
         )}
@@ -73,7 +88,10 @@ const Login = () => {
 
           <p className="text-center mt-2 text-sm text-[#555]">
             Don't have an account?{" "}
-            <Link to="/register" className="text-[#B76E79] font-semibold hover:underline">
+            <Link
+              to="/register"
+              className="text-[#B76E79] font-semibold hover:underline"
+            >
               Register here
             </Link>
           </p>

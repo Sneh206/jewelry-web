@@ -6,6 +6,7 @@ import AdminHeader from '../page/AdminHeader.jsx';
 const AdminOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [searchOrderId, setSearchOrderId] = useState(''); // Filter state
 
   const fetchOrders = async () => {
     try {
@@ -47,6 +48,12 @@ const AdminOrderPage = () => {
     fetchOrders();
   }, []);
 
+  const filteredOrders = orders.filter(order =>
+    (order.orderId || order._id)
+      .toLowerCase()
+      .includes(searchOrderId.toLowerCase())
+  );
+
   return (
     <>
       <div className="top-0 z-50 shadow-md m-6">
@@ -55,21 +62,45 @@ const AdminOrderPage = () => {
 
       <div className="min-h-screen flex justify-center bg-gradient-to-br from-gray-50 to-white px-4 py-8">
         <div className="max-w-7xl w-full space-y-8">
+
+          {/* Total Revenue Card */}
           <div className="p-6 bg-yellow-100 border border-yellow-300 rounded-2xl shadow-2xl transform transition-all hover:scale-[1.02] duration-300">
-            <h2 className="text-2xl font-bold text-yellow-800 text-center">💰 Total Payment Received</h2>
+            <h2 className="text-2xl font-bold text-yellow-800 text-center">
+              💰 Total Payment Received
+            </h2>
             <p className="text-4xl mt-3 font-extrabold text-green-600 text-center">
               ₹{totalRevenue.toFixed(2)}
             </p>
           </div>
 
+          {/* Search Bar with 3D jewel style */}
+          <div className="flex justify-end mb-6">
+            <input
+              type="text"
+              placeholder="🔍 Search Order ID..."
+              value={searchOrderId}
+              onChange={(e) => setSearchOrderId(e.target.value)}
+              className="w-64 p-3 rounded-2xl
+                         bg-gradient-to-r from-yellow-50 via-pink-50 to-purple-50
+                         text-purple-700 font-semibold placeholder-purple-400
+                         border-2 border-pink-300 shadow-inner
+                         focus:outline-none focus:ring-4 focus:ring-pink-400
+                         hover:scale-105 hover:shadow-xl transition-all duration-300"
+            />
+          </div>
+
+          {/* Orders Table */}
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <h1 className="text-3xl font-bold py-6 bg-gray-100 text-center text-gray-800 shadow-sm">📦 All Orders</h1>
+            <h1 className="text-3xl font-bold py-6 bg-gray-100 text-center text-gray-800 shadow-sm">
+              📦 All Orders
+            </h1>
 
             <div className="overflow-x-auto">
               <table className="w-full table-auto text-sm text-left text-gray-700">
-                <thead className="bg-gray-200 text-gray-600 uppercase text-xs">
+                <thead className="bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200 text-gray-700 uppercase text-xs">
                   <tr>
                     <th className="px-4 py-3">#</th>
+                    <th className="px-4 py-3">Order ID</th>
                     <th className="px-4 py-3">Customer</th>
                     <th className="px-4 py-3">Email</th>
                     <th className="px-4 py-3">Items</th>
@@ -86,10 +117,16 @@ const AdminOrderPage = () => {
                 </thead>
 
                 <tbody className="divide-y">
-                  {orders.length ? (
-                    orders.map((order, idx) => (
-                      <tr key={order._id} className="hover:bg-gray-50 transition-all hover:scale-[1.01] duration-200">
+                  {filteredOrders.length ? (
+                    filteredOrders.map((order, idx) => (
+                      <tr
+                        key={order._id}
+                        className="hover:scale-[1.02] hover:bg-gradient-to-r from-yellow-50 via-pink-50 to-purple-50 transition-all duration-300 shadow-inner"
+                      >
                         <td className="px-4 py-3">{idx + 1}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-indigo-600 break-all">
+                          {order.orderId || order._id}
+                        </td>
                         <td className="px-4 py-3 font-semibold">{order.customerName}</td>
                         <td className="px-4 py-3 text-xs text-gray-500 break-all">
                           {order.customerEmail || 'N/A'}
@@ -136,19 +173,17 @@ const AdminOrderPage = () => {
                         </td>
                         <td className="px-4 py-3 text-xs font-medium">
                           <span
-                            className={`px-2 py-1 rounded-full font-semibold text-xs
-                              ${
-                                order.status.toLowerCase() === 'processing'
-                                  ? 'text-red-600 bg-red-100'
-                                  : order.status.toLowerCase() === 'shipped'
-                                  ? 'text-yellow-700 bg-yellow-100'
-                                  : order.status.toLowerCase() === 'delivered'
-                                  ? 'text-green-600 bg-green-100'
-                                  : order.status.toLowerCase() === 'cancelled'
-                                  ? 'text-red-600 bg-red-100'
-                                  : 'text-gray-600 bg-gray-100'
-                              }
-                            `}
+                            className={`px-2 py-1 rounded-full font-semibold text-xs ${
+                              order.status.toLowerCase() === 'processing'
+                                ? 'text-red-600 bg-red-100'
+                                : order.status.toLowerCase() === 'shipped'
+                                ? 'text-yellow-700 bg-yellow-100'
+                                : order.status.toLowerCase() === 'delivered'
+                                ? 'text-green-600 bg-green-100'
+                                : order.status.toLowerCase() === 'cancelled'
+                                ? 'text-red-600 bg-red-100'
+                                : 'text-gray-600 bg-gray-100'
+                            }`}
                           >
                             {order.status}
                           </span>
@@ -181,7 +216,7 @@ const AdminOrderPage = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="13" className="text-center py-6 text-gray-400">
+                      <td colSpan="15" className="text-center py-6 text-gray-400">
                         No orders found
                       </td>
                     </tr>
